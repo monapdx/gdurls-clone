@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { sql } from "../../lib/db";
 import CopyButton from "../components/CopyButton";
+import DeleteButton from "../components/DeleteButton";
 
 export const runtime = "nodejs";
 
@@ -35,7 +36,6 @@ export default async function DashboardPage({
   searchParams: { q?: string };
 }) {
   const q = (searchParams?.q ?? "").trim();
-
   const like = `%${q.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
 
   const rows = await sql<Row[]>`
@@ -74,12 +74,9 @@ export default async function DashboardPage({
           </Link>
         </div>
 
-        <p className="subtitle">
-          All created shortlinks with click totals.
-        </p>
+        <p className="subtitle">All created shortlinks with click totals.</p>
       </header>
 
-      {/* SEARCH */}
       <section className="card">
         <form method="get" style={{ display: "grid", gap: 10 }}>
           <label className="label" htmlFor="q">
@@ -111,7 +108,6 @@ export default async function DashboardPage({
         </form>
       </section>
 
-      {/* TABLE */}
       <section className="card">
         <div className="statsHeader">
           <h2 className="h2" style={{ margin: 0 }}>
@@ -122,20 +118,18 @@ export default async function DashboardPage({
         {rows.length === 0 ? (
           <p className="muted">No links yet.</p>
         ) : (
-          <div
-            className="table"
-            style={{ marginTop: 12 }}
-          >
+          <div className="table" style={{ marginTop: 12 }}>
             <div
               className="thead"
               style={{
-                gridTemplateColumns: "170px 1fr 80px 180px",
+                gridTemplateColumns: "210px 1fr 80px 180px 110px",
               }}
             >
               <div>Short Link</div>
               <div>Title / Target</div>
               <div>Clicks</div>
               <div>Last Click</div>
+              <div>Actions</div>
             </div>
 
             {rows.map((r) => {
@@ -146,11 +140,10 @@ export default async function DashboardPage({
                   key={r.code}
                   className="trow"
                   style={{
-                    gridTemplateColumns: "170px 1fr 80px 180px",
+                    gridTemplateColumns: "210px 1fr 80px 180px 110px",
                   }}
                 >
-                  {/* Short Link + Copy */}
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <a
                       className="link mono"
                       href={shortUrl}
@@ -159,34 +152,26 @@ export default async function DashboardPage({
                     >
                       {r.code}
                     </a>
-
                     <CopyButton text={shortUrl} />
                   </div>
 
-                  {/* Title / URL */}
                   <div>
                     {r.drive_title ? (
                       <div>
-                        <div className="mono">
-                          {truncate(r.drive_title)}
-                        </div>
-                        <div className="small muted">
-                          {truncate(r.target_url)}
-                        </div>
+                        <div className="mono">{truncate(r.drive_title)}</div>
+                        <div className="small muted">{truncate(r.target_url)}</div>
                       </div>
                     ) : (
-                      <div className="mono small">
-                        {truncate(r.target_url)}
-                      </div>
+                      <div className="mono small">{truncate(r.target_url)}</div>
                     )}
                   </div>
 
-                  {/* Click Count */}
                   <div className="mono">{r.clicks}</div>
 
-                  {/* Last Click */}
-                  <div className="mono small">
-                    {formatDate(r.last_click)}
+                  <div className="mono small">{formatDate(r.last_click)}</div>
+
+                  <div>
+                    <DeleteButton code={r.code} />
                   </div>
                 </div>
               );
