@@ -1,7 +1,7 @@
 # gdurls-clone
 
-A private Google Drive (or any URL) shortlink generator with click
-tracking, built with Next.js, Postgres (Neon), and deployed on Vercel.
+A private **Google Drive** (or any URL) shortlink generator with click
+tracking, built with **Next.js**, **Postgres** (Neon), and deployed on **Vercel**.
 
 Create short links, track click activity, manage links from a dashboard,
 and protect admin functionality with simple authentication.
